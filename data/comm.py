@@ -103,10 +103,10 @@ def area_weighted_mean(data, lat):
 
 
 def save_data_hdf5(filename, data_path, data):
-	"""
-	Inputs are filename, data_path, and data
-	"""
+    """
+    Inputs are filename, data_path, and data
+    """
 
     with h5py.File(filename, 'a') as h5f:
-	h5f.create_dataset(data_path, data=data, compression='gzip', compression_opt=5)
+        h5f.create_dataset(data_path, data=data, compression='gzip', compression_opt=5)
     return
