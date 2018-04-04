@@ -1,7 +1,17 @@
 
 # -*- coding: utf-8 -*-
 
-from .. import h5py
+#from .. import h5py, np
+
+__all__ = [
+		"bf_info",
+		"get_rad_latlon",
+		"get_rgb",
+		]
+
+
+from .. import h5py, np
+
 
 def bf_info(file_path, instrument):
     """
@@ -44,10 +54,10 @@ def bf_info(file_path, instrument):
 
 def get_rad_latlon(bf_path, instrument, granblock, band=None, camera=None):
     """
-    Note: Inputs vary for different instruments.
+    Note: Inputs vary for different instruments, working on single granule/block only.
     ASTER requires granule (str), band (int);
     MODIS requires granule (str), band (could be float for 13.5 and 14.5);
-    MISR requires block (int), camera
+    MISR requires block (int), band (e.g., 'Red'), camera (e.g., 'AN')
     MOPITT requires nothing and will output its all bands.
     """
 
@@ -109,16 +119,18 @@ def get_rad_latlon(bf_path, instrument, granblock, band=None, camera=None):
             lon = h5f['MOPITT/{}/Geolocation/Longitude'.format(granblock)][:]
         
         np.place(radiance, radiance<0, 0)
-    except:
-        print ">> You have selected instrument: {}, granule/block: {}, band: {}, and camera: {} but failed.".format(
+
+    except Exception as err:
+        print ">> You have selected instrument: {}, granule/block: {}, band: {}, and camera: {}, but failed.".format(
         instrument, granblock, band, camera)
         print ">> Please choose another combination."
+        print ">> Err message: {}".format(err)
         return [], [], []
     
     return radiance, lat, lon
 
 
-ef get_rgb(bf_path, instrument, granblock, camera=None):
+def get_rgb(bf_path, instrument, granblock, camera=None):
     """
     Note: Inputs vary for different instruments.
     ASTER requires granule (str) and represents R, G, B using 3N, 2, 1 bands (15 m);
