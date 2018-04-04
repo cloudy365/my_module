@@ -40,3 +40,7 @@ def bf_info(file_path, instrument):
                                 print "      ", lev4, l.maxshape
                             else:
                                 print "      ", lev4
+
+
+def git_sublime_test():
+    print "git_sublime_test runs successfully."
