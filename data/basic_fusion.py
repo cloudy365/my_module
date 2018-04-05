@@ -52,11 +52,14 @@ def bf_info(file_path, instrument):
                                 print "      ", lev4
 
 
-def get_rad_latlon(bf_path, instrument, granblock, band=None, camera=None):
+def get_rad_latlon(bf_path, instrument, granblock, band=None, camres=None):
     """
     Note: Inputs vary for different instruments, working on single granule/block only.
     ASTER requires granule (str), band (int);
-    MODIS requires granule (str), band (could be float for 13.5 and 14.5);
+    MODIS requires granule (str), band (could be float for 13.5 and 14.5), res could choose from 
+                   1) None (default), 
+                   2) 'Aggr500' (for band 1/2),
+                   3) 'Aggr1km' (for band 1--7);
     MISR requires block (int), band (e.g., 'Red'), camera (e.g., 'AN')
     MOPITT requires nothing and will output its all bands.
     """
@@ -78,7 +81,7 @@ def get_rad_latlon(bf_path, instrument, granblock, band=None, camera=None):
         
 
         elif instrument == 'MISR':
-            radiance = h5f['MISR/{}/Data_Fields/{}_Radiance'.format(camera[:2], band)][granblock]
+            radiance = h5f['MISR/{}/Data_Fields/{}_Radiance'.format(camres[:2], band)][granblock]
             if radiance.shape[0] == 512:
                 lat = h5f['MISR/HRGeolocation/GeoLatitude'][granblock]
                 lon = h5f['MISR/HRGeolocation/GeoLongitude'][granblock]
@@ -92,27 +95,52 @@ def get_rad_latlon(bf_path, instrument, granblock, band=None, camera=None):
             bands_500 = np.array([3, 4, 5, 6, 7])
             bands_1km_RefSB = np.array([8, 9, 10, 11, 12, 13, 13.5, 14, 14.5, 15, 16, 17, 18, 19, 26])
             bands_1km_Emissive = np.array([20, 21, 22, 23, 24, 25, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36])
-            if band in bands_250:
-                idx = np.where(bands_250==band)[0][0]
-                radiance = h5f['MODIS/{}/_250m/Data_Fields/EV_250_RefSB'.format(granblock)][idx]
-                lat = h5f['MODIS/{}/_250m/Geolocation/Latitude'.format(granblock)][:]
-                lon = h5f['MODIS/{}/_250m/Geolocation/Longitude'.format(granblock)][:]  
-            elif band in bands_500:
-                idx = np.where(bands_500==band)[0][0]
-                radiance = h5f['MODIS/{}/_500m/Data_Fields/EV_500_RefSB'.format(granblock)][idx]
-                lat = h5f['MODIS/{}/_500m/Geolocation/Latitude'.format(granblock)][:]
-                lon = h5f['MODIS/{}/_500m/Geolocation/Longitude'.format(granblock)][:]  
-            elif band in bands_1km_RefSB:
-                idx = np.where(bands_1km_RefSB==band)[0][0]
-                radiance = h5f['MODIS/{}/_1KM/Data_Fields/EV_1KM_RefSB'.format(granblock)][idx]
-                lat = h5f['MODIS/{}/_1KM/Geolocation/Latitude'.format(granblock)][:]
-                lon = h5f['MODIS/{}/_1KM/Geolocation/Longitude'.format(granblock)][:]
-            elif band in bands_1km_Emissive:
-                idx = np.where(bands_1km_Emissive==band)[0][0]
-                radiance = h5f['MODIS/{}/_1KM/Data_Fields/EV_1KM_Emissive'.format(granblock)][idx]
-                lat = h5f['MODIS/{}/_1KM/Geolocation/Latitude'.format(granblock)][:]
-                lon = h5f['MODIS/{}/_1KM/Geolocation/Longitude'.format(granblock)][:]
+            if camres == None:
+                if band in bands_250:
+                    idx = np.where(bands_250==band)[0][0]
+                    radiance = h5f['MODIS/{}/_250m/Data_Fields/EV_250_RefSB'.format(granblock)][idx]
+                    lat = h5f['MODIS/{}/_250m/Geolocation/Latitude'.format(granblock)][:]
+                    lon = h5f['MODIS/{}/_250m/Geolocation/Longitude'.format(granblock)][:]  
+                elif band in bands_500:
+                    idx = np.where(bands_500==band)[0][0]
+                    radiance = h5f['MODIS/{}/_500m/Data_Fields/EV_500_RefSB'.format(granblock)][idx]
+                    lat = h5f['MODIS/{}/_500m/Geolocation/Latitude'.format(granblock)][:]
+                    lon = h5f['MODIS/{}/_500m/Geolocation/Longitude'.format(granblock)][:]  
+                elif band in bands_1km_RefSB:
+                    idx = np.where(bands_1km_RefSB==band)[0][0]
+                    radiance = h5f['MODIS/{}/_1KM/Data_Fields/EV_1KM_RefSB'.format(granblock)][idx]
+                    lat = h5f['MODIS/{}/_1KM/Geolocation/Latitude'.format(granblock)][:]
+                    lon = h5f['MODIS/{}/_1KM/Geolocation/Longitude'.format(granblock)][:]
+                elif band in bands_1km_Emissive:
+                    idx = np.where(bands_1km_Emissive==band)[0][0]
+                    radiance = h5f['MODIS/{}/_1KM/Data_Fields/EV_1KM_Emissive'.format(granblock)][idx]
+                    lat = h5f['MODIS/{}/_1KM/Geolocation/Latitude'.format(granblock)][:]
+                    lon = h5f['MODIS/{}/_1KM/Geolocation/Longitude'.format(granblock)][:]
+
+            elif camres == 'Aggr500':
+                if band not in bands_250:
+                    raise Exception("Invalid band for Aggr500, which should be 1 or 2.", band)
+                else:
+                    idx = np.where(bands_250==band)[0][0]
+                    radiance = h5f['MODIS/{}/_500m/Data_Fields/EV_250_Aggr500_RefSB'.format(granblock)][idx]
+                    lat = h5f['MODIS/{}/_500m/Geolocation/Latitude'.format(granblock)][:]
+                    lon = h5f['MODIS/{}/_500m/Geolocation/Longitude'.format(granblock)][:]  
             
+            elif camres == 'Aggr1km':
+                if band not in np.append(bands_250, bands_500):
+                    raise Exception("Invalid band for Aggr1km, which should be 1 -- 7.", band)
+                elif band in bands_250:
+                    idx = np.where(bands_250==band)[0][0]
+                    radiance = h5f['MODIS/{}/_1KM/Data_Fields/EV_250_Aggr1km_RefSB'.format(granblock)][idx]
+                    lat = h5f['MODIS/{}/_1KM/Geolocation/Latitude'.format(granblock)][:]
+                    lon = h5f['MODIS/{}/_1KM/Geolocation/Longitude'.format(granblock)][:]  
+                else:
+                    idx = np.where(bands_500==band)[0][0]
+                    radiance = h5f['MODIS/{}/_1KM/Data_Fields/EV_500_Aggr1km_RefSB'.format(granblock)][idx]
+                    lat = h5f['MODIS/{}/_1KM/Geolocation/Latitude'.format(granblock)][:]
+                    lon = h5f['MODIS/{}/_1KM/Geolocation/Longitude'.format(granblock)][:]
+
+
         elif instrument == 'MOPITT':
             radiance = h5f['/MOPITT/{}/Data_Fields/MOPITTRadiances'.format(granblock)][:, :, :, :, 0]
             lat = h5f['MOPITT/{}/Geolocation/Latitude'.format(granblock)][:]
@@ -122,7 +150,7 @@ def get_rad_latlon(bf_path, instrument, granblock, band=None, camera=None):
 
     except Exception as err:
         print ">> You have selected instrument: {}, granule/block: {}, band: {}, and camera: {}, but failed.".format(
-        instrument, granblock, band, camera)
+        instrument, granblock, band, camres)
         print ">> Please choose another combination."
         print ">> Err message: {}".format(err)
         return [], [], []
@@ -130,25 +158,55 @@ def get_rad_latlon(bf_path, instrument, granblock, band=None, camera=None):
     return radiance, lat, lon
 
 
-def get_rgb(bf_path, instrument, granblock, camera=None):
+def get_rgb(bf_path, instrument, granblock, camera=None, customize_rgb_bands=[]):
     """
     Note: Inputs vary for different instruments.
     ASTER requires granule (str) and represents R, G, B using 3N, 2, 1 bands (15 m);
     MODIS requires granule (str) and represents R, G, B using 1, 4, 3 bands (500 m);
     MISR requires block (int) and camera (CAPTICAL), represents R, G, B using red, green, and blue bands (1.1 km).
          If camera is "AN", the output resolution is 275 m. If camera is "AN_1km", the output resolution is 1.1 km.
+    
+    Note that the customize_rgb_bands only works for MODIS.
     """
 
     h5f = h5py.File(bf_path, 'r')
     
     if instrument == 'MODIS':
-        print ">> Retrieving MODIS RGB, granule: {}.".format(granblock)
-        granule = granblock
-        r = h5f['/MODIS/{}/_500m/Data_Fields/EV_250_Aggr500_RefSB'.format(granule)][0]
-        g = h5f['/MODIS/{}/_500m/Data_Fields/EV_500_RefSB'.format(granule)][1]
-        b = h5f['/MODIS/{}/_500m/Data_Fields/EV_500_RefSB'.format(granule)][0]
-    
+        if len(customize_rgb_bands) == 0:
+            print ">> Retrieving NORMAL MODIS RGB, granule: {}.".format(granblock)
+            granule = granblock
+            r = h5f['/MODIS/{}/_500m/Data_Fields/EV_250_Aggr500_RefSB'.format(granule)][0]
+            g = h5f['/MODIS/{}/_500m/Data_Fields/EV_500_RefSB'.format(granule)][1]
+            b = h5f['/MODIS/{}/_500m/Data_Fields/EV_500_RefSB'.format(granule)][0]
+        else:
+            print ">> Retrieving USER-DEFINED MODIS RGB, granule: {}.".format(granblock)
+            print ">> Red: band {}, Green: band {}, Blue: band {}".format(customize_rgb_bands[0], 
+                                                                          customize_rgb_bands[1],
+                                                                          customize_rgb_bands[2])
+            granule = granblock
+            
+            tmp = []
+            if any(np.array(customize_rgb_bands)>7):
+                # Aggr1km
+                for iband in customize_rgb_bands:
+                    if iband in range(1, 8):
+                        rad, _, _ = get_rad_latlon(bf_path, instrument, granule, iband, camres='Aggr1km')
+                    else:
+                        rad, _, _ = get_rad_latlon(bf_path, instrument, granule, iband)
+                    tmp.append(rad)
+            else:
+                # Aggr500
+                for iband in customize_rgb_bands:
+                    if iband in range(1, 3):
+                        rad, _, _ = get_rad_latlon(bf_path, instrument, granule, iband, camres='Aggr500')
+                    else:
+                        rad, _, _ = get_rad_latlon(bf_path, instrument, granule, iband)
+                    tmp.append(rad)
+            r = tmp[0]
+            g = tmp[1]
+            b = tmp[2]
 
+    
     elif instrument == 'MISR':
         print ">> Retrieving MISR RGB, camera: {}, block: {}.".format(camera, granblock)
         
@@ -218,3 +276,26 @@ def get_rgb(bf_path, instrument, granblock, camera=None):
     rgb = np.rollaxis(np.array(rgb), 0, 3)
 
     return rgb
+
+
+def get_bounding_latlon(bf_path, instrument, granblock):
+    with h5py.File(bf_path, 'r') as h5f:
+        
+        if instrument == 'ASTER':
+            lat = h5f['/ASTER/{}/VNIR/Geolocation/Latitude'.format(granblock)][:]
+            lon = h5f['/ASTER/{}/VNIR/Geolocation/Longitude'.format(granblock)][:]
+            
+        elif instrument == 'MISR':
+            lat = h5f['/MISR/Geolocation/GeoLatitude'][granblock]
+            lon = h5f['/MISR/Geolocation/GeoLongitude'][granblock]
+            lat = np.vstack(lat)
+            lon = np.vstack(lon)
+            
+        elif instrument == 'MODIS':
+            lat = h5f['/MODIS/{}/_250m/Geolocation/Latitude'.format(granblock)][:]
+            lon = h5f['/MODIS/{}/_250m/Geolocation/Longitude'.format(granblock)][:]
+    
+    lats = [ lat[0, 0], lat[-1, 0], lat[-1, -1], lat[0, -1] ]
+    lons = [ lon[0, 0], lon[-1, 0], lon[-1, -1], lon[0, -1] ] 
+    
+    return lats, lons

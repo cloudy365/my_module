@@ -35,7 +35,9 @@ from sklearn import svm
 # plot modules
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
-
+from matplotlib.mlab import griddata
+from matplotlib.patches import Polygon
+from scipy.misc import bytescale, toimage
 
 
 """
