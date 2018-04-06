@@ -292,8 +292,8 @@ def get_bounding_latlon(bf_path, instrument, granblock):
             lon = np.vstack(lon)
             
         elif instrument == 'MODIS':
-            lat = h5f['/MODIS/{}/_250m/Geolocation/Latitude'.format(granblock)][:]
-            lon = h5f['/MODIS/{}/_250m/Geolocation/Longitude'.format(granblock)][:]
+            lat = h5f['/MODIS/{}/_1KM/Geolocation/Latitude'.format(granblock)][:]
+            lon = h5f['/MODIS/{}/_1KM/Geolocation/Longitude'.format(granblock)][:]
     
     lats = [ lat[0, 0], lat[-1, 0], lat[-1, -1], lat[0, -1] ]
     lons = [ lon[0, 0], lon[-1, 0], lon[-1, -1], lon[0, -1] ] 
