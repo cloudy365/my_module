@@ -2,11 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-__all__ = [
-		"arc_ocean_mask",
-		"area_weighted_mean",
-		"save_data_hdf5",
-		]
+__all__ = ["arc_ocean_mask","area_weighted_mean","save_data_hdf5","latlon_to_idx",]
 
 
 from .. import np, h5py
@@ -110,3 +106,31 @@ def save_data_hdf5(filename, data_path, data):
     with h5py.File(filename, 'a') as h5f:
         h5f.create_dataset(data_path, data=data, compression='gzip', compression_opt=5)
     return
+
+
+def latlon_to_idx(lat_int, lat_decimal, lon_int, lon_decimal, num):
+    """
+    Added on April 11, 2018.
+    This function finds the index for latitude and longitude based on the input lat/lon and num_per_degree.
+    This function only works for the same spatial lat/lon resolutions.
+    The input latitude should be in between 90 and -90 degree;
+    The input longitude should be in between -180 and 180 degree;
+    The input num equals to 1.0/resolution.
+    """
+    # Latitude part
+    if lat_int + lat_decimal < 0:
+        idx_lat = (90 - lat_int) * num - int(lat_decimal * num)
+    else:
+        idx_lat = (90 - lat_int) * num - int(lat_decimal * num) - 1
+        
+    # Longitude part
+    if lon_int + lon_decimal < 0:
+        idx_lon = (180 + lon_int) * num + int(lon_decimal * num) - 1
+    else:
+        idx_lon = (180 + lon_int) * num + int(lon_decimal * num)
+    
+    
+    if idx_lon == 360 * num:
+        idx_lon = 0
+    
+    return int(idx_lat), int(idx_lon)

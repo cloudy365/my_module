@@ -3,11 +3,7 @@
 
 #from .. import h5py, np
 
-__all__ = [
-		"bf_info",
-		"get_rad_latlon",
-		"get_rgb",
-		]
+__all__ = ["bf_info", "get_rad_latlon", "get_rgb",]
 
 
 from .. import h5py, np
