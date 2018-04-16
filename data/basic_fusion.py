@@ -9,9 +9,9 @@ __all__ = ["bf_info", "get_rad_latlon", "get_rgb",]
 from .. import h5py, np
 
 
-def bf_info(file_path, instrument):
+def bf_info(file_path, instrument, GranuleCamera='all'):
     """
-    Input: basic fusion file path, instrument
+    Input: basic fusion file path, instrument, (granule or camera, default is 'all').
     Output: data structure
     """
     h5f = h5py.File(file_path, 'r')

@@ -4,7 +4,7 @@
 from . import np, bytescale
 
 
-def enhance_rgb(rgb_array, coeff=None, scale_method='discrete', scale_factors=[1, 1, 1]):
+def enhance_rgb(rgb_array, scale_method='discrete', scale_factors=[1, 1, 1], coeffs=None):
     """
     Inputs: a rgb array with band dimension at last;
             a coeff used to normalize all three bands, default is the maximum value of blue band
@@ -15,13 +15,13 @@ def enhance_rgb(rgb_array, coeff=None, scale_method='discrete', scale_factors=[1
     g = rgb_array[:, :, 1]
     b = rgb_array[:, :, 2]
     
-    if coeff == None:
-        coeff = b.max() # Maximum blue radiance
+    if coeffs == None:
+        coeffs =  [r.max(), g.max(), b.max()]
 
     rgb = np.zeros((r.shape[0], r.shape[1], 3), dtype=np.uint8)
-    rgb[:, :, 0] = scale_image_2d(bytescale(r / coeff), scale_method, scale_factors[0])
-    rgb[:, :, 1] = scale_image_2d(bytescale(g / coeff), scale_method, scale_factors[1])
-    rgb[:, :, 2] = scale_image_2d(bytescale(b / coeff), scale_method, scale_factors[2])
+    rgb[:, :, 0] = scale_image_2d(bytescale(r, cmin=0, cmax=coeffs[0]), scale_method, scale_factors[0])
+    rgb[:, :, 1] = scale_image_2d(bytescale(g, cmin=0, cmax=coeffs[1]), scale_method, scale_factors[1])
+    rgb[:, :, 2] = scale_image_2d(bytescale(b, cmin=0, cmax=coeffs[2]), scale_method, scale_factors[2])
         
     return rgb
 
@@ -57,8 +57,8 @@ def scale_image_2d(image_array, method, scale_factor):
         scaled = scaled + (mask * 255)
     
     elif method == 'RLT':
-        val_min = image.min()
-        val_max = image.max()
+        val_min = 0
+        val_max = 255
         scaled = 255*(1.0*image/(val_max-val_min))**(1.0/scale_factor)
         
     return scaled
