@@ -134,3 +134,30 @@ def latlon_to_idx(lat_int, lat_decimal, lon_int, lon_decimal, num):
         idx_lon = 0
     
     return int(idx_lat), int(idx_lon)
+
+
+def planck_rad2temp(radiance, wavelength):
+    """
+    Input central wavelength (um) and spectral radiance (W/m2-sr-um);
+    Output blackbody temperature (K).
+    
+    Calculation is based on https://ncc.nesdis.noaa.gov/data/planck.html
+                    c2
+    t = -------------------------------
+        lambda * ln(c1/lambda^5/L + 1)
+    
+    where t = blackbody temperature (K)
+        L = blackbody radiance (W/m2-sr-um)
+        c1 = 1.191042e8 (W/m2-sr-um-4)
+        c2 = 1.4387752e4 (K um)
+    lambda = wavelength (um)
+    """
+    
+    # Constant
+    c1 = 1.191042e8
+    c2 = 1.4387752e4
+    
+    # Brightness Temp.
+    bt = c2 / (wavelength * np.log(c1/wavelength**5/radiance + 1))
+    
+    return bt
