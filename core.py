@@ -5,7 +5,7 @@ description: Contains the common modules and data paths used in my research.
 """
 
 import warnings
-warnings.filterwarnings("always")
+warnings.filterwarnings("ignore")
 
 # common modules
 import numpy as np
