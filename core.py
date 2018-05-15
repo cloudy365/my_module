@@ -4,6 +4,9 @@ description: Contains the common modules and data paths used in my research.
 
 """
 
+import warnings
+warnings.filterwarnings("always")
+
 # common modules
 import numpy as np
 from tqdm import tqdm
@@ -24,14 +27,12 @@ import MisrToolkit as mtk   # hdfeos
 
 
 # statistical modules
-np.warnings.filterwarnings("ignore")
-import statsmodels.api as sm
-np.warnings.resetwarnings()
-from scipy.stats import linregress, norm
-#from sklearn.cross_validation import train_test_split
-from sklearn.linear_model import LogisticRegressionCV
-from sklearn.metrics import f1_score
-from sklearn import svm
+#import statsmodels.api as sm
+#from scipy.stats import linregress, norm
+##from sklearn.cross_validation import train_test_split
+#from sklearn.linear_model import LogisticRegressionCV
+#from sklearn.metrics import f1_score
+#from sklearn import svm
 
 
 # plot modules
@@ -43,9 +44,15 @@ from scipy.misc import bytescale, toimage
 
 
 """
-some data paths locally, used by zyz_data module
+Some data paths locally, used by child module.
+Use platform.platform() to determine whether it is local machine or HPC.
 """
-DATA_PATH = '/u/sciteam/smzyz/data'
+import platform
+
+if platform.platform().startswith('Linux'):
+    DATA_PATH = '/u/sciteam/smzyz/data'
+else:
+    DATA_PATH = '/Volumes/postdoc/Data'
 
 ocean_mask_1d = DATA_PATH + '/Support/ISLSCP_WaterMasks/land_ocean_mask2_1d.asc'
 ocean_mask_hd = DATA_PATH + '/Support/ISLSCP_WaterMasks/land_ocean_mask2_hd.asc'
