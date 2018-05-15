@@ -163,7 +163,7 @@ def MOD35_retrieve_cloud_mask(mod35_file):
     """
         
     def subfunc_retrieve_cloud_mask(icloud_mask):
-        # 3retrieve 48 bit MODIS Cloud Mask SDS product
+        # retrieve 48 bit MODIS Cloud Mask SDS product
         # icloud_mask should have the shape of (6,), and dtype of 'uint8'.
         mask = ''
         for ibyte in icloud_mask:
@@ -171,6 +171,7 @@ def MOD35_retrieve_cloud_mask(mod35_file):
             mask = mask + tmp[::-1]
         return mask
 
+    
     mfile = SD(mod35_file)
     mdata = np.array(mfile.select('Cloud_Mask')[:], dtype='uint8')
     mdata = np.rollaxis(mdata, 0, 3) # roll first dimension to last
