@@ -26,23 +26,14 @@ import MisrToolkit as mtk   # hdfeos
 
 
 # statistical modules
-<<<<<<< HEAD
-np.warnings.filterwarnings("ignore")
-import statsmodels.api as sm
-#np.warnings.resetwarnings()
-from scipy.stats import linregress, norm
-#from sklearn.cross_validation import train_test_split
-from sklearn.linear_model import LogisticRegressionCV
-from sklearn.metrics import f1_score
-from sklearn import svm
-=======
-#import statsmodels.api as sm
-#from scipy.stats import linregress, norm
-##from sklearn.cross_validation import train_test_split
-#from sklearn.linear_model import LogisticRegressionCV
-#from sklearn.metrics import f1_score
-#from sklearn import svm
->>>>>>> 629fe31412743acca05b631e9daf50b5ba7d9d20
+# np.warnings.filterwarnings("ignore")
+# import statsmodels.api as sm
+# #np.warnings.resetwarnings()
+# from scipy.stats import linregress, norm
+# #from sklearn.cross_validation import train_test_split
+# from sklearn.linear_model import LogisticRegressionCV
+# from sklearn.metrics import f1_score
+# from sklearn import svm
 
 
 # plot modules
