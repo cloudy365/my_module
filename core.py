@@ -26,7 +26,7 @@ import MisrToolkit as mtk   # hdfeos
 # statistical modules
 np.warnings.filterwarnings("ignore")
 import statsmodels.api as sm
-np.warnings.resetwarnings()
+#np.warnings.resetwarnings()
 from scipy.stats import linregress, norm
 #from sklearn.cross_validation import train_test_split
 from sklearn.linear_model import LogisticRegressionCV
