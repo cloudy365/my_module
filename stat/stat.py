@@ -5,8 +5,13 @@ description: Contains the common used statistical codes (including ML) used in m
              Functions arranged by function types.
 """
 
-from zyz_core import *
-
+from .. import np
+import statsmodels.api as sm
+from scipy.stats import linregress, norm
+#from sklearn.cross_validation import train_test_split
+from sklearn.linear_model import LogisticRegressionCV
+from sklearn.metrics import f1_score
+from sklearn import svm
 
 
 #####

@@ -1,6 +1,5 @@
 """
-module name: zyz_core
-description: Contains the common modules and data paths used in my research.
+Contains the common modules and data paths used in my research.
 
 """
 

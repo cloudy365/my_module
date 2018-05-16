@@ -2,15 +2,11 @@
 # -*- coding: utf-8 -*-
 
 
-__all__ = [
-		"CERES_LV3_grid",
-		"CERES_LV3_Arctic_mean",
-		]
-
-
 from .. import np, Dataset
 from .. import ceres_dir
 
+
+__all__ = ["CERES_LV3_grid","CERES_LV3_Arctic_mean"]
 
 
 def CERES_LV3_grid(dset, fld_name, year, month, version=4.0):
